@@ -1,0 +1,385 @@
+{
+  "info": {
+    "_postman_id": "e76fb1a5-af5f-442f-80ae-b698337f6ad4",
+    "name": "My Collection",
+    "description": "### Welcome to Postman! This is your first collection. \n\nCollections are your starting point for building and testing APIs. You can use this one to:\n\n• Group related requests\n• Test your API in real-world scenarios\n• Document and share your requests\n\nUpdate the name and overview whenever you’re ready to make it yours.\n\n[Learn more about Postman Collections.](https://learning.postman.com/docs/collections/collections-overview/)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52099814",
+    "_collection_link": "https://go.postman.co/collection/52099814-e76fb1a5-af5f-442f-80ae-b698337f6ad4?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "PetClinic API Test Suite",
+      "item": [
+        {
+          "name": "00_Owners",
+          "item": [
+            {
+              "name": "Positif Case",
+              "item": [
+                {
+                  "name": "Owners - 201 - Success",
+                  "event": [
+                    {
+                      "listen": "prerequest",
+                      "script": {
+                        "exec": [
+                          ""
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    },
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "//ambil respon dan request\r",
+                          "let responseBody = pm.response.json();\r",
+                          "let requestBody = JSON.parse(pm.request.body.raw);\r",
+                          "\r",
+                          "// Validasi status 201\r",
+                          "pm.test(\"Status should be 201\", function () {\r",
+                          "    pm.response.to.have.status(201);\r",
+                          "});\r",
+                          "\r",
+                          "//Validasi id found\r",
+                          "pm.test(\"ID Generate\", function () {\r",
+                          "    pm.expect(pm.response.json().id).to.not.be.null;\r",
+                          "});\r",
+                          "\r",
+                          "//Save ID\r",
+                          "pm.environment.set(\"id\", responseBody.id);\r",
+                          "\r",
+                          "\r",
+                          "//Save Semua data di environment\r",
+                          "pm.environment.set(\"DataEnvi\",JSON.stringify(requestBody));\r",
+                          "\r",
+                          "/*//Save request to environment\r",
+                          "pm.environment.set(\"firstName\", requestBody.firstName);\r",
+                          "pm.environment.set(\"lastName\", requestBody.lastName);\r",
+                          "pm.environment.set(\"address\", requestBody.address);\r",
+                          "pm.environment.set(\"city\", requestBody.city);\r",
+                          "pm.environment.set(\"telephone\", requestBody.telephone);\r",
+                          "\r",
+                          "console.log(pm.response.json());\r",
+                          "*/"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"firstName\": \"Toing\",\r\n  \"lastName\": \"Nguyen\",\r\n  \"address\": \"110\",\r\n  \"city\": \"Jakarta\",\r\n  \"telephone\": \"0811188118\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/owners",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "owners"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Owners - 200 - Success (Verify Create)",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "let responseBody = pm.response.json();\r",
+                          "let createdata = JSON.parse(pm.environment.get(\"DataEnvi\"));\r",
+                          "\r",
+                          "//Get Validasi Status code\r",
+                          "pm.test(\"Status code is 200\", function () {\r",
+                          "    pm.response.to.have.status(200);\r",
+                          "    });\r",
+                          "\r",
+                          "//Compare field yang dikirim ke envi dengan yang masuk ke database\r",
+                          "Object.keys(createdata).forEach(keys =>{\r",
+                          "    pm.test(`Fields \" ${keys} \" should match`, function () {\r",
+                          "        pm.expect(responseBody[keys]).to.eql(createdata[keys]);\r",
+                          "});\r",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/owners/{{id}}",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "owners",
+                        "{{id}}"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Owners - 204 - Success",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "let requestBody = JSON.parse(pm.request.body.raw);\r",
+                          "let expectdata = JSON.parse(pm.environment.get(\"DataEnvi\"));  \r",
+                          "\r",
+                          "// Cek Status Code 204\r",
+                          "pm.test(\"Status code is 204\", function () {\r",
+                          "    pm.response.to.have.status(204);\r",
+                          "});\r",
+                          "\r",
+                          "/*//Update data lama dengan data baru(jika tidak mandatory semua)\r",
+                          "Object.keys(requestBody).forEach(key => {\r",
+                          "    expectdata[key] = requestBody [key];\r",
+                          "\r",
+                          "});\r",
+                          "*/\r",
+                          "\r",
+                          "//Simpan data baru ke envi\r",
+                          "pm.environment.set(\"DataEnvi\", JSON.stringify(expectdata));\r",
+                          ""
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "PUT",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"firstName\": \"Jenny\",\r\n  \"lastName\": \"Fstvls\",\r\n  \"address\": \"Jl. H. Pekir\",\r\n  \"city\": \"Yogyakarta\",\r\n  \"telephone\": \"0821188119\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/owners/{{id}}",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "owners",
+                        "{{id}}"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Owners - 200 - Success (Verify Update)",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "let responseBody = pm.response.json();\r",
+                          "let expectdata = JSON.parse(pm.environment.get('DataEnvi'));\r",
+                          "\r",
+                          "//Validasi Status code 200\r",
+                          "pm.test(\"Status code is 200\", function () {\r",
+                          "    pm.response.to.have.status(200);\r",
+                          "    });\r",
+                          "\r",
+                          "//Compare data lama dengan yang baru setelah Update\r",
+                          "Object.keys(expectdata).forEach(key => {\r",
+                          "    pm.test(`Fields ${key} Match after Update`, function(){\r",
+                          "        pm.expect(responseBody[key]).to.eql(expectdata[key]);\r",
+                          "    });\r",
+                          "    });"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    },
+                    {
+                      "listen": "prerequest",
+                      "script": {
+                        "exec": [
+                          ""
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/owners/{{id}}",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "owners",
+                        "{{id}}"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Owners - 204 - Success",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "//Validasi response delete\r",
+                          "pm.test(\"Status code is 204\", function () {\r",
+                          "    pm.response.to.have.status(204);\r",
+                          "});\r",
+                          "\r",
+                          "//Unset data di envi\r",
+                          "pm.environment.unset(\"DataEnvi\");\r",
+                          "pm.environment.unset(\"id\");\r",
+                          "\r",
+                          ""
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "DELETE",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/owners/{{id}}",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "owners",
+                        "{{id}}"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Owners - 404 - Success (Verify Delete)",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "//Validasi Status delete\r",
+                          "pm.test(\"Status Code After delete is 404\", function () {\r",
+                          "    pm.response.to.have.status(404);\r",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/owners/{{id}}",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "owners",
+                        "{{id}}"
+                      ]
+                    }
+                  },
+                  "response": []
+                }
+              ]
+            },
+            {
+              "name": "Negatif Case",
+              "item": []
+            },
+            {
+              "name": "01_PetType",
+              "item": [
+                {
+                  "name": "PetType - 201 - Success",
+                  "request": {
+                    "method": "GET",
+                    "header": []
+                  },
+                  "response": []
+                },
+                {
+                  "name": "New Request",
+                  "request": {
+                    "method": "GET",
+                    "header": []
+                  },
+                  "response": []
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
